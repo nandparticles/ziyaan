@@ -1,41 +1,30 @@
-async function fetchImages() {
+document.addEventListener('DOMContentLoaded', async () => {
+    const gallery = document.getElementById('gallery');
     const subreddits = ['Amoledbackgrounds', 'wallpapers'];
     const imageUrls = [];
 
     for (const subreddit of subreddits) {
         const response = await fetch(`https://www.reddit.com/r/${subreddit}/top.json?limit=150`);
         const data = await response.json();
-        const posts = data.data.children;
+        const images = data.data.children
+            .map(post => post.data.url)
+            .filter(url => url.endsWith('.jpg') || url.endsWith('.png'));
 
-        posts.forEach(post => {
-            if (post.data.post_hint === 'image') {
-                imageUrls.push(post.data.url);
-            }
-        });
+        imageUrls.push(...images);
     }
 
-    return imageUrls;
-}
+    // Filter and prioritize 1920x1080 images
+    const filteredImages = imageUrls.filter(url => url.includes('1920x1080'));
+    const remainingImages = imageUrls.filter(url => !url.includes('1920x1080'));
+    const finalImages = filteredImages.concat(remainingImages.slice(0, 300 - filteredImages.length));
 
-function createImageElement(url) {
-    const img = document.createElement('img');
-    img.src = url;
-    img.alt = 'Random Image';
-    img.addEventListener('click', () => {
-        const newWindow = window.open();
-        newWindow.document.write(`<img src="${url}" alt="Random Image" style="width:100%;">`);
+    finalImages.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Image';
+        img.addEventListener('click', () => {
+            window.open(url, '_blank');
+        });
+        gallery.appendChild(img);
     });
-    return img;
-}
-
-async function displayImages() {
-    const imageGrid = document.getElementById('image-grid');
-    const imageUrls = await fetchImages();
-
-    imageUrls.forEach(url => {
-        const imgElement = createImageElement(url);
-        imageGrid.appendChild(imgElement);
-    });
-}
-
-displayImages();
+});
