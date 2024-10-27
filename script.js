@@ -1,41 +1,32 @@
+const gallery = document.querySelector('.gallery');
+const imageUrls = []; // Array to store image URLs
+
+// Fetch images from Reddit
 async function fetchImages() {
     const subreddits = ['Amoledbackgrounds', 'wallpapers'];
-    const imageUrls = [];
-
     for (const subreddit of subreddits) {
         const response = await fetch(`https://www.reddit.com/r/${subreddit}/top.json?limit=150`);
         const data = await response.json();
-        const posts = data.data.children;
-
-        posts.forEach(post => {
-            if (post.data.post_hint === 'image') {
-                imageUrls.push(post.data.url);
-            }
-        });
+        const images = data.data.children
+            .map(post => post.data)
+            .filter(post => post.preview && post.preview.images[0].source.width === 1920 && post.preview.images[0].source.height === 1080)
+            .map(post => post.preview.images[0].source.url);
+        imageUrls.push(...images);
     }
-
-    return imageUrls;
+    displayImages();
 }
 
-function createImageElement(url) {
-    const img = document.createElement('img');
-    img.src = url;
-    img.alt = 'Random Image';
-    img.addEventListener('click', () => {
-        const newWindow = window.open();
-        newWindow.document.write(`<img src="${url}" alt="Random Image" style="width:100%;">`);
-    });
-    return img;
-}
-
-async function displayImages() {
-    const imageGrid = document.getElementById('image-grid');
-    const imageUrls = await fetchImages();
-
+// Display images in the gallery
+function displayImages() {
     imageUrls.forEach(url => {
-        const imgElement = createImageElement(url);
-        imageGrid.appendChild(imgElement);
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Reddit Image';
+        img.addEventListener('click', () => {
+            window.open(url, '_blank').focus();
+        });
+        gallery.appendChild(img);
     });
 }
 
-displayImages();
+fetchImages();
