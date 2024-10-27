@@ -7,18 +7,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header class="mdc-top-app-bar">
-        <div class="mdc-top-app-bar__row">
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                <span class="mdc-top-app-bar__title">Material Design Wallpapers</span>
-            </section>
-        </div>
-    </header>
-    <main class="mdc-top-app-bar--fixed-adjust">
-        <div class="wallpaper-container" id="wallpaper-container">
-            <!-- Wallpapers will be loaded here -->
-        </div>
-    </main>
+    <div class="container">
+        <h1>Material Design Wallpapers</h1>
+        <button id="fetch-wallpapers">Fetch Wallpapers</button>
+        <div id="wallpapers" class="wallpapers"></div>
+    </div>
     <script src="scripts.js"></script>
 </body>
 </html>
