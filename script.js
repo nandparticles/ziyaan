@@ -1,20 +1,41 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('wallpaper-container');
-    fetch('https://www.reddit.com/r/wallpapers/top/.json?limit=10')
-        .then(response => response.json())
-        .then(data => {
-            const posts = data.data.children;
-            posts.forEach(post => {
-                const imgUrl = post.data.url;
-                if (imgUrl.endsWith('.jpg') || imgUrl.endsWith('.png')) {
-                    const wallpaperDiv = document.createElement('div');
-                    wallpaperDiv.className = 'wallpaper';
-                    const img = document.createElement('img');
-                    img.src = imgUrl;
-                    wallpaperDiv.appendChild(img);
-                    container.appendChild(wallpaperDiv);
-                }
-            });
+document.getElementById('fetch-wallpapers').addEventListener('click', fetchWallpapers);
+
+async function fetchWallpapers() {
+    const response = await fetch('https://www.reddit.com/r/wallpapers/top.json?limit=10');
+    const data = await response.json();
+    const wallpapers = data.data.children.map(child => child.data.url).filter(url => url.endsWith('.jpg') || url.endsWith('.png'));
+
+    const wallpapersContainer = document.getElementById('wallpapers');
+    wallpapersContainer.innerHTML = '';
+
+    wallpapers.forEach(url => {
+        const wallpaperDiv = document.createElement('div');
+        wallpaperDiv.className = 'wallpaper';
+
+        const img = document.createElement('img');
+        img.src = url;
+        wallpaperDiv.appendChild(img);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'download-btn';
+        downloadBtn.innerText = 'Download';
+        downloadBtn.addEventListener('click', () => downloadImage(url));
+        wallpaperDiv.appendChild(downloadBtn);
+
+        wallpapersContainer.appendChild(wallpaperDiv);
+    });
+}
+
+function downloadImage(url) {
+    fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'wallpaper.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         })
-        .catch(error => console.error('Error fetching wallpapers:', error));
-});
+        .catch(console.error);
+}
