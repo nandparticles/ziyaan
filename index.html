@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .image-container {
+            margin: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 300px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reddit Image Gallery</h1>
+    <div id="gallery"></div>
+
+    <script>
+        async function fetchRedditImages() {
+            const response = await fetch('https://www.reddit.com/r/pics/top.json?limit=10');
+            const data = await response.json();
+            const posts = data.data.children;
+
+            const gallery = document.getElementById('gallery');
+            posts.forEach(post => {
+                const imageUrl = post.data.url;
+                if (imageUrl.endsWith('.jpg') || imageUrl.endsWith('.png')) {
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'image-container';
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    imageContainer.appendChild(img);
+                    gallery.appendChild(imageContainer);
+                }
+            });
+        }
+
+        fetchRedditImages();
+    </script>
+</body>
+</html>
