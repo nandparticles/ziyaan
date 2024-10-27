@@ -3,51 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reddit Image Gallery</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .image-container {
-            margin: 10px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 300px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+    <title>Material Design Wallpapers</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Reddit Image Gallery</h1>
-    <div id="gallery"></div>
-
-    <script>
-        async function fetchRedditImages() {
-            const response = await fetch('https://www.reddit.com/r/pics/top.json?limit=10');
-            const data = await response.json();
-            const posts = data.data.children;
-
-            const gallery = document.getElementById('gallery');
-            posts.forEach(post => {
-                const imageUrl = post.data.url;
-                if (imageUrl.endsWith('.jpg') || imageUrl.endsWith('.png')) {
-                    const imageContainer = document.createElement('div');
-                    imageContainer.className = 'image-container';
-                    const img = document.createElement('img');
-                    img.src = imageUrl;
-                    imageContainer.appendChild(img);
-                    gallery.appendChild(imageContainer);
-                }
-            });
-        }
-
-        fetchRedditImages();
-    </script>
+    <header class="mdc-top-app-bar">
+        <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <span class="mdc-top-app-bar__title">Material Design Wallpapers</span>
+            </section>
+        </div>
+    </header>
+    <main class="mdc-top-app-bar--fixed-adjust">
+        <div class="wallpaper-container" id="wallpaper-container">
+            <!-- Wallpapers will be loaded here -->
+        </div>
+    </main>
+    <script src="scripts.js"></script>
 </body>
 </html>
