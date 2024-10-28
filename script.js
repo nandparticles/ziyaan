@@ -1,47 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.getElementById('gallery');
-    const lazyLoadToggle = document.getElementById('lazyLoadToggle');
-    let lazyLoad = true;
-
-    lazyLoadToggle.addEventListener('click', () => {
-        lazyLoad = !lazyLoad;
-        loadImages();
-    });
+    const subreddits = ['darkwallpaper', 'wallpapers'];
+    const imageCount = 100;
 
     async function fetchImages() {
-        const urls = [
-            'https://www.reddit.com/r/Amoledbackgrounds.json',
-            'https://www.reddit.com/r/wallpapers.json'
-        ];
-        const images = [];
-        for (const url of urls) {
-            const response = await fetch(url);
+        let images = [];
+        for (let subreddit of subreddits) {
+            const response = await fetch(`https://www.reddit.com/r/${subreddit}/top.json?limit=${imageCount / subreddits.length}`);
             const data = await response.json();
-            const posts = data.data.children;
-            posts.forEach(post => {
-                const image = post.data.url;
-                if (image.endsWith('.jpg') || image.endsWith('.png') && post.data.preview.images[0].source.width === 1920 && post.data.preview.images[0].source.height === 1080) {
-                    images.push(image);
-                }
-            });
+            images = images.concat(data.data.children.map(post => post.data.url).filter(url => url.endsWith('.jpg') || url.endsWith('.png')));
         }
         return images;
     }
 
-    function loadImages() {
-        gallery.innerHTML = '';
-        fetchImages().then(images => {
-            images.slice(0, 300).forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.loading = lazyLoad ? 'lazy' : 'eager';
-                img.addEventListener('click', () => {
-                    window.open(src, '_blank').focus();
-                });
-                gallery.appendChild(img);
+    function displayImages(images) {
+        images.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Reddit Image';
+            img.addEventListener('click', () => {
+                window.open(url, '_blank');
             });
+            gallery.appendChild(img);
         });
     }
 
-    loadImages();
+    fetchImages().then(displayImages);
 });

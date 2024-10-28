@@ -4,41 +4,35 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-header {
+.container {
     text-align: center;
-    padding: 20px;
 }
 
-#lazyLoadToggle {
-    background-color: #ffffff;
-    color: #121212;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
+h1 {
+    margin-bottom: 20px;
 }
 
-main {
+.gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
-    padding: 20px;
+    padding: 10px;
 }
 
-img {
+.gallery img {
     width: 100%;
     height: auto;
+    border-radius: 8px;
     cursor: pointer;
+    transition: transform 0.2s;
 }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #1e1e1e;
-}
-
-footer img {
-    width: 24px;
-    height: 24px;
+.gallery img:hover {
+    transform: scale(1.05);
 }
